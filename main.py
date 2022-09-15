@@ -5,10 +5,8 @@ import subprocess
 import os
 import numpy
 from sys import exit
-from render import _lineCHA
-from render import _drawConsoleBorder
-from render import _drawH_rod
 from boxclass import C_pseudoTab
+from drawclass import C_Draw
 
 screen = curses.initscr()                   # start; init screen
 screen.keypad(1)                            # disable line input
@@ -28,6 +26,7 @@ cPos          = [22,3]                               # current working cursor po
 cPos_relative = 0                           # cursor position relative to currDir list
 
 TAB_01 = C_pseudoTab(20,30,screen)
+BOX    = C_Draw
 
 def _clearArea(xoff,yoff,xlen,ylen):        # clear a given area
     for y in range(0,ylen):
@@ -100,7 +99,7 @@ def _debugLine():
     screen.addstr(termHeight-11,termWidth-40,str(testPath))
 
 ####################################
-_drawConsoleBorder()
+BOX._drawBox(0,0,termWidth,termHeight,screen)
 screen.addstr(0,3,'[dirViewer]')
 _drawNode('/')
 
