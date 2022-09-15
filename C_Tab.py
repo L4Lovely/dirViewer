@@ -11,7 +11,7 @@ from glyphlib import _lineCHA
 #       :: draw; hide; clear   
 #
 
-class C_pseudoTab:
+class C_Tab:
     def __init__(self, offset, width, screen):
         self.screen = screen
         self.offset = offset

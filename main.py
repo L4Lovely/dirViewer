@@ -1,37 +1,29 @@
-import curses
-import time
+import curses, time
 import keyboard as kb
-import subprocess
-import os
-import numpy
+import os, subprocess
 from sys import exit
-from boxclass import C_pseudoTab
-from drawclass import C_Draw
+from C_Tab import C_Tab
+from C_Render import C_Draw
 
-screen = curses.initscr()                   # start; init screen
-screen.keypad(1)                            # disable line input
-curses.noecho()                             # no line-buffer
-curses.curs_set(0)                          # stackoverflow said so
+screen = curses.initscr()   # start; init screen
+screen.keypad(1)            # disable line input
+curses.noecho()             # no line-buffer
+curses.curs_set(0)          # stackoverflow said so
 
 #INIT VARIABLES
-termWidth     = os.get_terminal_size().columns # terminal height
-termHeight    = os.get_terminal_size().lines   # terminal width
-currDir       = os.listdir('/')                   # currDir; listing of all items in the cwd
-PathHistory   = ['/']                         # arr listing of current absolute path
-dirSize       = len(currDir)                      # currDir size
+termWidth     = os.get_terminal_size().columns  # terminal height
+termHeight    = os.get_terminal_size().lines    # terminal width
+currDir       = os.listdir('/')                 # currDir; listing of all items in the cwd
+PathHistory   = ['/']                           # arr listing of current absolute path
+dirSize       = len(currDir)                    # currDir size
 
-cPos_origin   = [22,3]                        # init cursor pos[x·y]
-cPosPre       = [22,5]                            # last cursor position[x·y]
-cPos          = [22,3]                               # current working cursor position[x·y]
-cPos_relative = 0                           # cursor position relative to currDir list
+cPos_origin   = [22,3]      # init cursor pos[x·y]
+cPosPre       = [22,5]      # last cursor position[x·y]
+cPos          = [22,3]      # current working cursor position[x·y]
+cPos_relative = 0           # cursor position relative to currDir list
 
-TAB_01 = C_pseudoTab(20,30,screen)
+TAB_01 = C_Tab(20,30,screen)
 BOX    = C_Draw
-
-def _clearArea(xoff,yoff,xlen,ylen):        # clear a given area
-    for y in range(0,ylen):
-        for x in range(0,xlen):
-            screen.addstr(y + yoff, x + xoff, ' ')
 
 def _drawNode(dirname_):                    # _drawNode draws a given dir list[e.g. currDir]
     global listLength, currDir, dirSize     # and sorts it by directories → files
@@ -98,6 +90,7 @@ def _debugLine():
     screen.addstr(termHeight-10,termWidth-40,str(PathHistory))
     screen.addstr(termHeight-11,termWidth-40,str(testPath))
 
+#-start up frame initialization ↓↓↓
 ####################################
 BOX._drawBox(0,0,termWidth,termHeight,screen)
 screen.addstr(0,3,'[dirViewer]')

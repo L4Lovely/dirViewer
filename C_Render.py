@@ -39,8 +39,10 @@ class C_Draw:
         except curses.error as e:
             pass
 
-    def _clear():
-        headLine_offset = 2
-        for y in range(headLine_offset + 1, os.get_terminal_size().lines - 1):
-            for x in range(offset + 1, offset + width - 1):
-                pass
+    def _clearRect(xoff,yoff,xlen,ylen,screen):
+        try:
+            for y in range(yoff, ylen - 1):
+                for x in range(yoff, xlen - 1):
+                    screen.addstr(yoff + y, xoff + x, ' ')
+        except curses.error as e:
+            pass
