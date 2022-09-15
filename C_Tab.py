@@ -1,7 +1,7 @@
 import curses
 import os
 from glyphlib import _lineCHA
-
+from C_Render import C_Render
 #
 #   Class: C_pseudoTab
 #   >this class' primary function is to designate
@@ -16,6 +16,9 @@ class C_Tab:
         self.screen = screen
         self.offset = offset
         self.width  = width
+        
+        self.termY  = os.get_terminal_size().lines
+        self.termX  = os.get_terminal_size().columns
 
     def _draw(self):#draw tab
         headLine_yPos = 2
@@ -32,13 +35,12 @@ class C_Tab:
             #draw T-segments
             self.screen.addstr(0, self.offset, _lineCHA('dlTt'))
             self.screen.addstr(0, self.width + self.offset, _lineCHA('dlTt'))
-            self.screen.addstr(os.get_terminal_size().lines - 1, self.offset, _lineCHA('dlTb'))
-            self.screen.addstr(os.get_terminal_size().lines - 1, self.width + self.offset, _lineCHA('dlTb'))
+            self.screen.addstr(self.termY - 1, self.offset, _lineCHA('dlTb'))
+            self.screen.addstr(self.termY - 1, self.width + self.offset, _lineCHA('dlTb'))
         except curses.error as e:
             pass
 
     def _clear(self):
-        headLine_offset = 2
-        for y in range(headLine_offset + 1, os.get_terminal_size().lines - 1):
-            for x in range(self.offset + 1, self.offset + self.width - 1):
+        for y in range(3, self.termY - 1):
+            for x in range(self.offset + 1, self.width + self.offset):
                 self.screen.addstr(y, x, ' ')

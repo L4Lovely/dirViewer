@@ -2,7 +2,7 @@ import os
 import curses
 from glyphlib import _lineCHA
 
-class C_Draw:
+class C_Render:
     #TAB DRAWING
     def _drawTab(offset,width,screen):#draw tab
         headLine_yPos = 2
@@ -41,8 +41,8 @@ class C_Draw:
 
     def _clearRect(xoff,yoff,xlen,ylen,screen):
         try:
-            for y in range(yoff, ylen - 1):
-                for x in range(yoff, xlen - 1):
-                    screen.addstr(yoff + y, xoff + x, ' ')
+            for y in range(yoff, ylen):
+                for x in range(xoff, xlen):
+                    screen.addstr(yoff + y, xoff + x, '0')
         except curses.error as e:
             pass

@@ -3,7 +3,7 @@ import keyboard as kb
 import os, subprocess
 from sys import exit
 from C_Tab import C_Tab
-from C_Render import C_Draw
+from C_Render import C_Render
 
 screen = curses.initscr()   # start; init screen
 screen.keypad(1)            # disable line input
@@ -23,7 +23,7 @@ cPos          = [22,3]      # current working cursor position[x·y]
 cPos_relative = 0           # cursor position relative to currDir list
 
 TAB_01 = C_Tab(20,30,screen)
-BOX    = C_Draw
+BOX    = C_Render
 
 def _drawNode(dirname_):                    # _drawNode draws a given dir list[e.g. currDir]
     global listLength, currDir, dirSize     # and sorts it by directories → files
@@ -83,13 +83,6 @@ def _cursorRelative(direction): #keeps track of cursor position rel. in currDir 
     elif direction == 'stop':
         cPos_relative = 0
 
-def _debugLine():
-    testPath = _getPath()
-    screen.addstr(termHeight-10,termWidth-40,'                            ')
-    screen.addstr(termHeight-11,termWidth-40,'                            ')
-    screen.addstr(termHeight-10,termWidth-40,str(PathHistory))
-    screen.addstr(termHeight-11,termWidth-40,str(testPath))
-
 #-start up frame initialization ↓↓↓
 ####################################
 BOX._drawBox(0,0,termWidth,termHeight,screen)
@@ -106,9 +99,6 @@ screen.refresh()
 
 keyLock = False
 while True:
-
-    _debugLine() ###remove later
-
     if kb.is_pressed('i') and not keyLock:
         cPosPre[0] = cPos[0]; cPosPre[1] = cPos[1]
         cPos[1] -= 1
@@ -123,8 +113,6 @@ while True:
             cPos[1] += 1
             _cursorRelative('down')
             _setCursor()
-
-#        elif cPos[1] == termHeight - 2 and cPos_relative[1] < len(currDir):
 
         screen.refresh()
         keyLock = True
@@ -143,8 +131,8 @@ while True:
         keyLock = True
 
     elif kb.is_pressed('l') and not keyLock:
-        _setPath(str(currDir[cPos_relative]))
         TAB_01._clear()
+        _setPath(str(currDir[cPos_relative]))
         _drawNode(_getPath())
         cPosPre[0] = cPos[0]; cPosPre[1] = cPos[1]
         cPos[1] = cPos_origin[1]
@@ -162,4 +150,4 @@ curses.curs_set(1)
 curses.nocbreak()
 screen.keypad(0)
 curses.echo()
-curses.endwin
+curses.endwin()
