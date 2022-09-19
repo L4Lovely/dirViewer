@@ -51,10 +51,16 @@ def on_press(key):
         screen.refresh()
 
     elif key==Key.down and cursor.cPos[1] != termHeight - 2 and cursor.cPos[1] != len(TABS[0].currDir)+2:
-        cursor.cPosPre[0] = cursor.cPos[0]; cursor.cPosPre[1] = cursor.cPos[1]
-        cursor.cPos[1] +=1
-        cursor.cPos_relative += 1
-        cursor._setCursor(screen)
+        if cursor.cPos_relative + 1< len(TABS[0].currDir):
+            cursor.cPosPre[0] = cursor.cPos[0]; cursor.cPosPre[1] = cursor.cPos[1]
+            cursor.cPos[1] +=1
+            cursor.cPos_relative += 1
+            cursor._setCursor(screen)
+        else:#hier muss noch was gemacht werden wenn C_Tab angepasst wurde
+            cursor.cPosPre[0] = cursor.cPos_relative[0]; cursor.cPosPre[1] = cursor.cPos_relative[1]
+            cursor.cPos_relative[1] +=1
+            TABS[0]._clearList()
+            TABS[0]._drawList()
         
         DEBUG()
         screen.refresh()
@@ -84,7 +90,7 @@ def on_press(key):
         screen.refresh()
     # elif key == Key.f2:
     #     if TABS[1]:
-    #         pass
+    #         cursor.cPos = TABS[1].cPos
     #     else:
     #         TABS.append(C_Tab(cursor.cPos_relative,'/'))
 
