@@ -1,46 +1,48 @@
-import curses
-import os
-from glyphlib import _lineCHA
-from C_Render import C_Render
-#
-#   Class: C_pseudoTab
-#   >this class' primary function is to designate
-#   >tabs of varyiing widths as object-instances
-#   >aswell as keep track of their contents and
-#   >directory lists or other items
-#       :: draw; hide; clear   
-#
+from C_Render import C_Draw
 
 class C_Tab:
-    def __init__(self, offset, width, screen):
-        self.screen = screen
-        self.offset = offset
-        self.width  = width
-        
-        self.termY  = os.get_terminal_size().lines
-        self.termX  = os.get_terminal_size().columns
+    def __init__(self, cPos_relative,Path,offset,width,screen):
+        self.cPos_relative = cPos_relative
+        self.PathHistory = []
+        self.PathHistory.append(Path)
+        self.dirList    = []
+        self.fileList   = []
+        self.currDir    = []
 
-    def _draw(self):#draw tab
-        headLine_yPos = 2
-        try:
-            for y in range(1, os.get_terminal_size().lines - 1): #draw left and right tab-borders
-                self.screen.addstr(y, self.offset, _lineCHA('dlvt'))
-                self.screen.addstr(y, self.offset + self.width, _lineCHA('dlvt'))      
-        
-            for x in range(1,self.width): #draw headline-separator
-                self.screen.addstr(headLine_yPos, x + self.offset, _lineCHA('dlht'))
-            self.screen.addstr(headLine_yPos, self.offset, _lineCHA('dlTl'))
-            self.screen.addstr(headLine_yPos, self.width + self.offset, _lineCHA('dlTr'))
+        self.Render     = C_Draw()
 
-            #draw T-segments
-            self.screen.addstr(0, self.offset, _lineCHA('dlTt'))
-            self.screen.addstr(0, self.width + self.offset, _lineCHA('dlTt'))
-            self.screen.addstr(self.termY - 1, self.offset, _lineCHA('dlTb'))
-            self.screen.addstr(self.termY - 1, self.width + self.offset, _lineCHA('dlTb'))
-        except curses.error as e:
-            pass
+        self.screen     = screen
+        self.width      = width
+        self.offset     = offset
+        self.listOrigin = [offset + 3, 3]
 
-    def _clear(self):
-        for y in range(3, self.termY - 1):
-            for x in range(self.offset + 1, self.width + self.offset):
-                self.screen.addstr(y, x, ' ')
+    def _setPath(self, list):
+        self.PathHistory.append(str(list))
+        self.PathHistory.append('/')
+
+    def _getPath(self):
+        newPath = ''
+        for i in range(0,len(self.PathHistory)):
+                newPath += str(self.PathHistory[i])
+        return newPath
+
+    def _getPreviousPath(self):
+        self.PathHistory.pop()
+        self.PathHistory.pop()
+
+    def _drawList(self):
+        dirList    = self.dirList
+        fileList   = self.fileList
+        currDir    = self.currDir
+        screen     = self.screen
+        listOrigin = self.listOrigin
+
+        self.dirList.clear()
+        self.fileList.clear()
+        self.Render._drawList(self._getPath(),dirList,fileList,currDir,listOrigin,screen)
+
+    def _drawTab(self):
+        self.Render._drawTab(self.offset,self.width,self.screen)
+
+    def _clearList(self):
+        self.Render._clear(self.offset,self.width,self.screen)
