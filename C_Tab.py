@@ -40,18 +40,7 @@ class C_Tab:
         self.dirList.clear()
         self.fileList.clear()
         self.Render._drawList(self._getPath(),dirList,fileList,currDir,listOrigin,screen)
-#die angepasste C_Render hier benutzten und das darüber erstmal auskommentieren wenn das hier drunter funktioniert
-    def _drawList(self):
-        dirList    = self.dirList
-        fileList   = self.fileList
-        currDir    = self.currDir
-        screen     = self.screen
-        listOrigin = self.listOrigin
 
-        self.dirList.clear()
-        self.fileList.clear()
-        self.Render._drawList(self._getPath(),dirList,fileList,currDir,listOrigin,screen)
-        
     def _drawTab(self):
         self.Render._drawTab(self.offset,self.width,self.screen)
 

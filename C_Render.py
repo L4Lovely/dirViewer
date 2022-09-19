@@ -18,7 +18,7 @@ class C_Draw(object):
         currDir.clear()
         currDir += dirList
         currDir += fileList
-#hier muss man noch etwas tun(nur eine for-schleifen mit currDir)
+
         for y in range(0,len(dirList)):
             if(y + listOrigin[1] < termHeight - 1):
                 Item = str(dirList[y])

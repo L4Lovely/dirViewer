@@ -24,7 +24,7 @@ cursor = cursor()
 Render = C_Draw()
 WINDOWS = []
 TABS = []
-TABS.append(C_Tab(cursor.cPos_relative,'/',15,30,screen))
+TABS.append(C_Tab(cursor.cPos_relative,'/',15,round(termWidth / 2 - 15),screen))
 
 #erste mal alles malen
 cursor.cPos_origin = [16,3]
@@ -51,16 +51,10 @@ def on_press(key):
         screen.refresh()
 
     elif key==Key.down and cursor.cPos[1] != termHeight - 2 and cursor.cPos[1] != len(TABS[0].currDir)+2:
-        if cursor.cPos_relative + 1< len(TABS[0].currDir):
-            cursor.cPosPre[0] = cursor.cPos[0]; cursor.cPosPre[1] = cursor.cPos[1]
-            cursor.cPos[1] +=1
-            cursor.cPos_relative += 1
-            cursor._setCursor(screen)
-        else:#hier muss noch was gemacht werden wenn C_Tab angepasst wurde
-            cursor.cPosPre[0] = cursor.cPos_relative[0]; cursor.cPosPre[1] = cursor.cPos_relative[1]
-            cursor.cPos_relative[1] +=1
-            TABS[0]._clearList()
-            TABS[0]._drawList()
+        cursor.cPosPre[0] = cursor.cPos[0]; cursor.cPosPre[1] = cursor.cPos[1]
+        cursor.cPos[1] +=1
+        cursor.cPos_relative += 1
+        cursor._setCursor(screen)
         
         DEBUG()
         screen.refresh()
@@ -88,11 +82,15 @@ def on_press(key):
         TABS[0]._drawList()
         DEBUG()
         screen.refresh()
-    # elif key == Key.f2:
-    #     if TABS[1]:
-    #         cursor.cPos = TABS[1].cPos
-    #     else:
-    #         TABS.append(C_Tab(cursor.cPos_relative,'/'))
+    elif key == Key.f2:
+        try:
+            if TABS[1]:
+                pass
+        except IndexError:
+            TABS.append(C_Tab(0,'/',TABS[0].width + TABS[0].offset, termWidth - (TABS[0].width + TABS[0].offset) - 10,screen))
+            TABS[1]._drawTab()
+            TABS[1]._drawList()
+            screen.refresh()
 
 with Listener(
         on_press=on_press
