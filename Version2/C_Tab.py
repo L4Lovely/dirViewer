@@ -1,3 +1,5 @@
+import os
+
 class C_Tab:
     def __init__(self,Path,offset,width,screen,Render):
         self.cPosPre = [offset+2,3]
@@ -53,8 +55,9 @@ class C_Tab:
    
     def _cursorDraw(self,screen):
         screen.addstr(self.cPos[1],self.cPos[0],'}')    
-#hier ist sch.... aber auf die schnelle nix anderes eingefallen(sollte in der dartunterliegenden klasse sein)
+#hier ist sch.... aber auf die schnelle nix anderes eingefallen(sollte in der dartunterliegenden klasse sein) -> FIXED :))
     def _setCursor(self,screen):
-        screen.addstr(self.cPosPre[1],self.cPosPre[0],' ')
+        if not self.cPos[1] == os.get_terminal_size().lines - 1: # verhindert das übermalen des eigentlichen cursors bei stillstand
+            screen.addstr(self.cPosPre[1],self.cPosPre[0],' ')
         screen.addstr(self.cPos[1],self.cPos[0],'}')  
 
