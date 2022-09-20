@@ -5,6 +5,7 @@ from glyphlib import _lineCHA
 class C_Draw(object):
     def __init__(self):
         self.currDirr = []
+        self.start = 0
 
     def _drawList(self,dirname_,dirList,fileList,currDir,listOrigin,screen,cPos_R):
         termHeight = os.get_terminal_size().lines
@@ -20,12 +21,13 @@ class C_Draw(object):
         currDir.clear()
         currDir += dirList
         currDir += fileList
-        self.currDirr = currDir
-        start = 0
+        self.currDirr = currDir        
         if (cPos_R > termHeight-5):
-            start = cPos_R - termHeight+5
+            self.start = cPos_R - termHeight+5
+        elif(self.start>0):
+            self.start -=1
         x = 0
-        for y in range(start,len(currDir)):
+        for y in range(self.start,len(currDir)):
             if (x + listOrigin[1] < termHeight -1):
                 Item = str(currDir[y])
                 Item = (Item[:15] + '..') if len(Item) > 17 else Item
