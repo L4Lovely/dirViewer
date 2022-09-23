@@ -1,15 +1,19 @@
 import os
 import curses
 from glyphlib import _lineCHA
+from F_Technical import _dirSizeWalk4
 
 class C_Draw(object):
-    
-    def _drawList(self,dirname_,dirList,fileList,currDir,listOrigin,screen):
+    def __init__(self):
+        self.start = 0
+
+    def _drawList(self,dirname_,dirList,fileList,currDir,listOrigin,screen,cPos_R):
         termHeight = os.get_terminal_size().lines
 
         for item in os.listdir(dirname_):
             if os.path.isdir(os.path.join(dirname_,item)):
-                dirList.append(item)
+                if item != 'proc':
+                    dirList.append('/'+item)
             elif os.path.isfile(os.path.join(dirname_,item)):
                 fileList.append(item)
 
@@ -19,20 +23,33 @@ class C_Draw(object):
         currDir += dirList
         currDir += fileList
 
-        for y in range(0,len(dirList)):
-            if(y + listOrigin[1] < termHeight - 1):
-                Item = str(dirList[y])
-                Item = (Item[:15] + '..') if len(Item) > 17 else Item # cut list string to length
-                
-                screen.addstr(y + listOrigin[1], listOrigin[0], '/' + Item)
+        if (cPos_R > termHeight-5):
+            self.start = cPos_R - termHeight+5
+        elif(self.start>0):
+            self.start -=1
 
-        for yy in range(0,len(fileList)):
-            if(yy + listOrigin[1] + len(dirList) < termHeight - 1): 
-                Item = str(fileList[yy])
-                Item = (Item[:15] + '..') if len(Item) > 17 else Item # cut list string to length
-                
-                screen.addstr(yy + listOrigin[1] + len(dirList), listOrigin[0], Item)
-    
+        x = 0
+        for y in range(self.start,len(currDir)):
+            if (x + listOrigin[1] < termHeight -1):
+                Item = str(currDir[y])
+                Item = str(y) + ' - ' + Item
+                Item = (Item[:15] + '..') if len(Item) > 17 else Item
+                screen.addstr(x + listOrigin[1],listOrigin[0],Item)
+                x += 1
+
+    def _drawSizeList(self,offset,listOrigin,absw_path,currDir,screen): #absw_path :: absolute working path
+        try:
+            sizeList = []
+            for j in range(0,len(currDir)):
+                absw_path += currDir[j]
+                sizeList.append(_dirSizeWalk4(absw_path))
+                absw_path = ''
+                screen.addstr(listOrigin[1] + j, listOrigin[0] + offset + 6, str(sizeList[j])[:7])
+        except curses.error as e:
+            pass
+        #iterate currDir list // append each index value to absw_path && call F_Technical._dirSizeWalk()
+
+
     def _drawBox(self, xoff,yoff,xlen,ylen,screen):
         try:     
             for y in range(1, ylen - 1):
@@ -55,7 +72,8 @@ class C_Draw(object):
                 screen.addstr(y, offset, _lineCHA('dlvt'))
                 screen.addstr(y, offset + width, _lineCHA('dlvt'))      
         
-            for x in range(1,width): #draw headline-separator
+            #draw headline-separator
+            for x in range(1,width):
                 screen.addstr(headLine_yPos, offset + x, _lineCHA('dlht'))
                 screen.addstr(headLine_yPos, offset, _lineCHA('dlTl'))
                 screen.addstr(headLine_yPos, offset + width, _lineCHA('dlTr'))
